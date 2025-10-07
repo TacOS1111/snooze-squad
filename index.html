@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snooze Squad 💤</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+h1, h2, h3 { margin: 10px 0; }
+
+button {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Neon Buttons */
+.neonButton {
+  background:#7EF0C7; color:#000; border:none; border-radius:10px;
+  padding:10px 20px; margin:5px 0; font-weight:bold;
+  text-shadow:0 0 5px #7EF0C7; box-shadow:0 0 15px #7EF0C7,0 0 30px #7EF0C7;
+  transition:0.2s;
+}
+.neonButton:hover {
+  box-shadow:0 0 25px #57caa3,0 0 40px #57caa3;
+}
+
+/* Login screen */
+#loginScreen { padding-top:80px; }
+#loginScreen input { width: 80%; padding:12px; border:none; border-radius:10px; outline:none; margin-bottom:10px; background: rgba(255,255,255,0.05); color:#fff; font-size:1em; box-shadow:0 0 10px rgba(126,240,199,0.6);}
+#loginScreen a { color:#ff7eb9; text-decoration:underline; cursor:pointer; }
+
+/* Sections */
+section {
+  margin:20px auto;
+  width:90%;
+  background:rgba(255,255,255,0.05);
+  border-radius:15px;
+  padding:15px;
+  box-shadow:0 0 15px rgba(126,240,199,0.4);
+}
+
+ul { list-style:none; padding:0; }
+li { background:rgba(255,255,255,0.1); margin:8px auto; padding:8px 12px; border-radius:8px; width:80%; text-align:left; display:flex; flex-direction:column; word-wrap:break-word; }
+li.done { text-decoration:line-through; opacity:0.7; }
+
+.logout { position:fixed; top:20px; right:120px; background:#ff5c8a; color:white; padding:8px 15px; border-radius:10px; box-shadow:0 0 15px #ff5c8a,0 0 25px #ff5c8a; }
+.logout:hover { box-shadow:0 0 25px #ff3d6b,0 0 40px #ff3d6b;}
+
+.settings { position:fixed; top:20px; right:20px; background:#ff7eb9; color:white; padding:8px 15px; border-radius:10px; box-shadow:0 0 15px #ff7eb9,0 0 25px #ff7eb9; cursor:pointer; }
+.settings:hover { box-shadow:0 0 25px #ff57a3,0 0 40px #ff57a3; }
+
+#settingsPanel { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.9); padding:20px; border-radius:15px; display:none; width:300px; text-align:center; box-shadow:0 0 20px #ff7eb9; }
+#settingsPanel input { width:80%; margin-bottom:10px; }
+#settingsPanel button { margin-top:10px; }
+
+.timestamp, .readBy { font-size:0.8em; color:#ccc; margin-left:5px; }
+
+img.gif { max-width:200px; border-radius:10px; margin-top:5px; }
+
+a { color:#7EF0C7; text-decoration:underline; }
+
+/* Animations */
+@keyframes bounceDown {
+  0% { transform: translateY(-300px); }
+  60% { transform: translateY(30px); }
+  80% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.dropDown {
+  color:#7EF0C7;
+  font-size:2em;
+  font-weight:800;
+  margin:20px 0;
+  text-shadow:0 0 8px #7EF0C7,0 0 20px #7EF0C7;
+  animation: bounceDown 1s ease forwards;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <h1>Snooze Squad 💤</h1>
+  <p>Login to start planning!</p>
+  <input id="username" type="text" placeholder="Enter your name..." />
+  <input id="password" type="password" placeholder="Enter password (optional)" />
+  <p><a onclick="forgorPass()">forgor pass?</a></p>
+  <button onclick="login()">Join</button>
+  <p class="hint">Accounts: Val, Nerdnoodle, Hannesowitch, DJ</p>
+  <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">Prank random user</a></p>
+</div>
+
+<!-- MAIN SCREEN -->
+<div id="mainScreen" class="hidden">
+  <header>
+    <h2 id="userName"></h2>
+    <button class="logout neonButton" onclick="logout()">Logout</button>
+    <button class="settings" onclick="toggleSettings()">⚙️</button>
+  </header>
+
+  <section>
+    <h3>📝 Notes</h3>
+    <textarea id="noteInput" placeholder="Write a note..."></textarea>
+    <button onclick="addNote()" class="neonButton">Add Note</button>
+    <ul id="noteList"></ul>
+  </section>
+
+  <section>
+    <h3>✅ To-Do List</h3>
+    <input id="todoInput" type="text" placeholder="Add something..." />
+    <button onclick="addTodo()" class="neonButton">Add</button>
+    <ul id="todoList"></ul>
+  </section>
+
+  <section>
+    <h3>🍕 Snacks & Movies</h3>
+    <input id="snackInput" type="text" placeholder="Add snacks or movies..." />
+    <button onclick="addSnack()" class="neonButton">Add</button>
+    <ul id="snackList"></ul>
+  </section>
+
+  <section>
+    <h3>💬 Group Chat</h3>
+    <input id="chatInput" type="text" placeholder="Type a message or link..." />
+    <button onclick="addChat()" class="neonButton">Send</button>
+    <ul id="chatList"></ul>
+  </section>
+</div>
+
+<div id="settingsPanel">
+  <h3>Account Settings</h3>
+  <input id="newPassword" type="password" placeholder="Enter new password" />
+  <button onclick="savePassword()">Save Password</button>
+  <button onclick="toggleSettings()">Cancel</button>
+</div>
+
+<script>
+// ACCOUNTS
+const users = [
+  {name:"Val", password:""},
+  {name:"Nerdnoodle", password:""},
+  {name:"Hannesowitch", password:""},
+  {name:"DJ", password:""}
+];
+
+let notes=[], todos=[], snacks=[], chats=[];
+
+// LOGIN
+function login(){
+  const name = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value;
+  const account = users.find(u=>u.name===name);
+  if(account){
+    if(account.password && account.password!==pass){ alert("❌ Wrong password!"); return; }
+    localStorage.setItem("loggedInUser", name);
+    showMain(name);
+  } else alert("❌ Access denied!");
+}
+
+// SHOW MAIN SCREEN
+function showMain(name){
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("mainScreen").classList.remove("hidden");
+  const userNameEl = document.getElementById("userName");
+  userNameEl.textContent = name + " 💫";
+  userNameEl.classList.add("dropDown");
+  markReadAll();
+  renderAll();
+}
+
+// LOGOUT
+function logout(){
+  localStorage.removeItem("loggedInUser");
+  document.getElementById("mainScreen").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+}
+
+// SETTINGS
+function toggleSettings(){
+  const panel = document.getElementById("settingsPanel");
+  panel.style.display = panel.style.display==="block" ? "none" : "block";
+}
+function savePassword(){
+  const newPass = document.getElementById("newPassword").value;
+  const currentUser = localStorage.getItem("loggedInUser");
+  if(!currentUser) return;
+  const account = users.find(u=>u.name===currentUser);
+  account.password = newPass;
+  alert("✅ Password updated!");
+  document.getElementById("newPassword").value="";
+  toggleSettings();
+}
+
+// FORGOR PASS?
+function forgorPass(){
+  const name = document.getElementById("username").value.trim();
+  if(!name) return alert("❌ Enter your account name first!");
+  const account = users.find(u=>u.name===name);
+  if(!account) return alert("❌ Account not found!");
+  if(account.password){
+    alert("💡 Hint: Password starts with '"+account.password.charAt(0)+"', length "+account.password.length);
+  } else alert("ℹ️ This account does not have a password set.");
+}
+
+// TIMESTAMP HELPER
+function getTimeStamp(){ 
+  const now = new Date();
+  return now.getHours().toString().padStart(2,'0')+":"+now.getMinutes().toString().padStart(2,'0');
+}
+
+// MARK READ
+function markReadAll(){
+  const user = localStorage.getItem("loggedInUser");
+  [notes,todos,snacks,chats].forEach(list=>{ list.forEach(i=>{ if(!i.readBy.includes(user)) i.readBy.push(user); }); });
+}
+
+// RENDER FUNCTIONS
+function renderAll(){ renderList(notes,"noteList"); renderList(todos,"todoList"); renderList(snacks,"snackList"); renderChat(); }
+
+function renderList(list,id){
+  markReadAll();
+  const ul = document.getElementById(id);
+  ul.innerHTML="";
+  const currentUser = localStorage.getItem("loggedInUser");
+  list.forEach((item,index)=>{
+    const li = document.createElement("li");
+    li.textContent = item.author+": "+item.text+" (sent at "+item.time+")";
+    const readSpan = document.createElement("span");
+    readSpan.textContent=" (read by: "+item.readBy.join(", ")+")";
+    readSpan.className="readBy";
+    li.appendChild(readSpan);
+    if(item.author===currentUser || !item.author){
+      const delBtn=document.createElement("button");
+      delBtn.textContent="❌"; delBtn.style.marginTop="5px";
+      delBtn.onclick=()=>{list.splice(index,1); renderAll();}
+      li.appendChild(delBtn);
+    }
+    ul.appendChild(li);
+  });
+}
+
+// CHAT WITH LINKS & GIFS
+function renderChat(){
+  markReadAll();
+  const ul=document.getElementById("chatList");
+  ul.innerHTML="";
+  const currentUser = localStorage.getItem("loggedInUser");
+  chats.forEach((item,index)=>{
+    const li=document.createElement("li");
+    const textDiv=document.createElement("div");
+    textDiv.textContent = item.author+": "+item.text+" (sent at "+item.time+")";
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    textDiv.innerHTML = textDiv.innerHTML.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+    li.appendChild(textDiv);
+    const gifMatch = item.text.match(/https?:\/\/[^\s]+\.gif/);
+    if(gifMatch){ const img=document.createElement("img"); img.src=gifMatch[0]; img.className="gif"; li.appendChild(img); }
+    const readSpan=document.createElement("span");
+    readSpan.textContent=" (read by: "+item.readBy.join(", ")+")";
+    readSpan.className="readBy";
+    li.appendChild(readSpan);
+    if(item.author===currentUser || !item.author){
+      const delBtn=document.createElement("button"); delBtn.textContent="❌"; delBtn.style.marginTop="5px"; delBtn.onclick=()=>{chats.splice(index,1); renderChat();}
+      li.appendChild(delBtn);
+    }
+    ul.appendChild(li);
+  });
+}
+
+// ADD ITEMS
+function addNote(){ const val=document.getElementById("noteInput").value.trim(); if(!val) return; notes.push({text:val,author:localStorage.getItem("loggedInUser"),time:getTimeStamp(),readBy:[]}); document.getElementById("noteInput").value=""; renderAll();}
+function addTodo(){ const val=document.getElementById("todoInput").value.trim(); if(!val) return; todos.push({text:val,author:localStorage.getItem("loggedInUser"),time:getTimeStamp(),readBy:[],done:false}); document.getElementById("todoInput").value=""; renderAll();}
+function addSnack(){ const val=document.getElementById("snackInput").value.trim(); if(!val) return; snacks.push({text:val,author:localStorage.getItem("loggedInUser"),time:getTimeStamp(),readBy:[]}); document.getElementById("snackInput").value=""; renderAll();}
+function addChat(){ const val=document.getElementById("chatInput").value.trim(); if(!val) return; chats.push({text:val,author:localStorage.getItem("loggedInUser"),time:getTimeStamp(),readBy:[]}); document.getElementById("chatInput").value=""; renderChat();}
+
+// ENTER KEY SEND
+document.getElementById("noteInput").addEventListener("keydown", e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault(); addNote();}});
+document.getElementById("todoInput").addEventListener("keydown", e=>{if(e.key==="Enter"){e.preventDefault(); addTodo();}});
+document.getElementById("snackInput").addEventListener("keydown", e=>{if(e.key==="Enter"){e.preventDefault(); addSnack();}});
+document.getElementById("chatInput").addEventListener("keydown", e=>{if(e.key==="Enter"){e.preventDefault(); addChat();}});
+
+// AUTO-LOGIN
+window.onload=()=>{
+  const user = localStorage.getItem("loggedInUser");
+  if(user && users.find(u=>u.name===user)) showMain(user);
+};
+</script>
+</body>
+</html>
